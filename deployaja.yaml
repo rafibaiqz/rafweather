@@ -1,0 +1,25 @@
+name: rafweather-app
+description: Custom weather app built by Rafi using FastAPI and OpenWeatherMap
+container:
+    image: rafibaiqz/rafweather:latest
+    port: 80
+resources:
+    cpu: 500m
+    memory: 512Mi
+    replicas: 1
+env:
+  - name: API_KEY
+    value: 8fff4f2eacdc7ea308d6330857398cd4
+    userManaged: false
+  - name: CITY
+    value: Semarang
+    userManaged: false
+  - name: MOEPAGE_WEATHER_UNITS
+    value: metric
+    userManaged: false
+healthCheck:
+    path: /
+    port: 80
+    initialDelaySeconds: 30
+    periodSeconds: 20
+domain: rafweather.deployaja.id

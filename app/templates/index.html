@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RafWeather - Cuaca Cantik & Menarik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-blue: #4a90e2;
+      --dark-blue: #1e3a8a;
+      --light-grey: #f0f4f8;
+      --text-dark: #333;
+      --text-light: #667;
+      --text-placeholder: #889;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(at top left, #89CFF0 0%, #0052D4 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 420px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px);
+      padding: 2.5rem;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+
+    .search {
+      display: flex;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border: none;
+      background: rgba(255, 255, 255, 0.7);
+      font-size: 1rem;
+      color: var(--text-dark);
+      /* [FIX 1] Menggunakan transisi yang lebih spesifik dan optimal */
+      transition: background-color 0.3s ease;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      background-color: white;
+    }
+    /* [FIX 2] Memberi styling pada placeholder agar konsisten */
+    input[type="text"]::placeholder {
+      color: var(--text-placeholder);
+      opacity: 1; /* Diperlukan di beberapa browser */
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      background-color: var(--primary-blue);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #357ABD;
+      transform: scale(1.05);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.25rem;
+      color: var(--dark-blue);
+    }
+    
+    .clock {
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    .weather {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .icon {
+      width: 120px;
+      height: 120px;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+
+    .temp {
+      font-size: 5rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-dark);
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .desc {
+      font-size: 1.25rem;
+      margin: 0.5rem 0;
+      text-transform: capitalize;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+    
+    .details {
+      color: var(--text-light);
+    }
+
+    .forecast {
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.5);
+      padding-top: 1.5rem;
+    }
+    
+    .forecast h3 {
+      font-size: 1.2rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      color: var(--dark-blue);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .forecast-day {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0.5rem;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+    
+    .forecast-day:not(:last-child) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    .forecast-day:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .forecast-info {
+        font-weight: 600;
+    }
+
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <form class="search" method="get" aria-label="Formulir Pencarian Cuaca">
+      <input type="text" name="city" placeholder="Cari kota..." value="{{ request.query_params.get('city', 'Jakarta') }}">
+      <button type="submit">Cari</button>
+    </form>
+
+    <div class="clock" id="clock">--:--:--</div>
+
+    <div class="weather">
+      {% if data.name %}
+        <h1>{{ data.name }}</h1>
+        <img class="icon" src="https://openweathermap.org/img/wn/{{ data.weather[0].icon }}@4x.png" alt="Ikon cuaca saat ini"/>
+        <div class="temp">{{ data.main.temp | round }}°C</div>
+        <div class="desc">{{ data.weather[0].description }}</div>
+        <div class="details">Min: {{ data.main.temp_min | round }}°C / Max: {{ data.main.temp_max | round }}°C</div>
+      {% else %}
+        <h1>Kota Tidak Ditemukan</h1>
+        <p>Silakan coba masukkan nama kota yang lain.</p>
+      {% endif %}
+    </div>
+
+    {% if forecast %}
+    <div class="forecast">
+      <h3>🌤️ Prakiraan 3 Hari Kedepan</h3>
+      {% for day in forecast[:3] %}
+        <div class="forecast-day">
+          <div class="forecast-info forecast-day-name" data-date="{{ day.dt_txt.split(' ')[0] }}">Memuat...</div>
+          <img src="https://openweathermap.org/img/wn/{{ day.weather[0].icon }}.png" alt="Ikon cuaca prakiraan" width="50"/>
+          <div class="forecast-info">{{ day.main.temp | round }}°C</div>
+        </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="footer">Made By Rafi Aziz</div>
+  </div>
+
+  <script defer>
+    function updateClock() {
+      const now = new Date();
+      const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' };
+      const timeString = new Intl.DateTimeFormat('id-ID', options).format(now);
+      document.getElementById('clock').textContent = timeString.replace(/\./g, ':');
+    }
+    
+    function formatForecastDayNames() {
+        const dayElements = document.querySelectorAll('.forecast-day-name');
+        dayElements.forEach(element => {
+            const dateString = element.getAttribute('data-date');
+            if (dateString) {
+                // OpenWeatherMap seringkali tidak menyertakan timezone, anggap UTC dan tambahkan waktu agar tidak salah hari
+                const date = new Date(dateString + 'T12:00:00Z'); 
+                const dayName = new Intl.DateTimeFormat('id-ID', { weekday: 'long' }).format(date);
+                element.textContent = dayName;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateClock();
+        setInterval(updateClock, 1000);
+        formatForecastDayNames();
+    });
+  </script>
+</body>
+</html>

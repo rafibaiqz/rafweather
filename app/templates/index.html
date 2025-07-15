@@ -56,17 +56,15 @@
       background: rgba(255, 255, 255, 0.7);
       font-size: 1rem;
       color: var(--text-dark);
-      /* [FIX 1] Menggunakan transisi yang lebih spesifik dan optimal */
       transition: background-color 0.3s ease;
     }
     input[type="text"]:focus {
       outline: none;
       background-color: white;
     }
-    /* [FIX 2] Memberi styling pada placeholder agar konsisten */
     input[type="text"]::placeholder {
       color: var(--text-placeholder);
-      opacity: 1; /* Diperlukan di beberapa browser */
+      opacity: 1;
     }
 
     button {
@@ -180,7 +178,7 @@
 <body>
   <div class="container">
     <form class="search" method="get" aria-label="Formulir Pencarian Cuaca">
-      <input type="text" name="city" placeholder="Cari kota..." value="{{ request.query_params.get('city', 'Jakarta') }}">
+      <input type="text" name="city" placeholder="Cari kota..." value="{{ request.query_params.get('city', 'kota Semarang') }}">
       <button type="submit">Cari</button>
     </form>
 
